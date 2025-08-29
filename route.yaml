@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ocp-2048
+  namespace: game-2048
+spec:
+  to:
+    kind: Service
+    name: ocp-2048
+  port:
+    targetPort: http
+  tls:
+    termination: edge
