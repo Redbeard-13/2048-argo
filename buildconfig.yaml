@@ -1,0 +1,24 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: ocp-2048
+  namespace: game-2048
+spec:
+  source:
+    type: Git
+    git:
+      uri: https://github.com/Redbeard-13/2048
+    contextDir: .          # корень репо 2048
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: httpd:2.4-el8
+        namespace: openshift    # стандартный httpd builder из Samples
+  output:
+    to:
+      kind: ImageStreamTag
+      name: ocp-2048:latest
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
