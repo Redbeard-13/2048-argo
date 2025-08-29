@@ -14,10 +14,14 @@ spec:
       labels:
         app: ocp-2048
     spec:
+      volumes:
+        - name: run-httpd
+          emptyDir: {}
+        - name: log-httpd
+          emptyDir: {}
       containers:
         - name: web
-          image: ""  # подставится триггером ImageChange из ImageStreamTag
-          imagePullPolicy: IfNotPresent
+          image: ""   # подставит триггер из ImageStreamTag
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -29,16 +33,10 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 10
           securityContext:
-            allowPrivilegeEscalation: false
             runAsNonRoot: true
-            readOnlyRootFilesystem: true
-  triggers:
-    - type: ConfigChange
-    - type: ImageChange
-      imageChangeParams:
-        automatic: true
-        containerNames: ["web"]
-        from:
-          kind: ImageStreamTag
-          name: ocp-2048:latest
-          namespace: game-2048
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: run-httpd
+              mountPath: /run/httpd
+            - name: log-httpd
+              mountPath: /var/log/httpd
