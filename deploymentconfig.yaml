@@ -21,7 +21,8 @@ spec:
           emptyDir: {}
       containers:
         - name: web
-          image: ""   # подставит триггер из ImageStreamTag
+          image: image-registry.openshift-image-registry.svc:5000/game-2048/ocp-2048@sha256:656cd9fcd28bb4ae787fbb3159e0edcc688055917869bde693f4d4951c670ade
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -40,3 +41,13 @@ spec:
               mountPath: /run/httpd
             - name: log-httpd
               mountPath: /var/log/httpd
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames: ["web"]
+        from:
+          kind: ImageStreamTag
+          name: ocp-2048:latest
+          namespace: game-2048
